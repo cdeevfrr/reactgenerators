@@ -70,5 +70,6 @@ Add the following to generator specifications:
  - User can specify a function for amountGeneratedAtTimestepN
  - DO NOT ADD - generators can affect other generators. We'll stick with generator independence
  - Max number of this generator that can be bought by a strategy (limited stock)
-
+ - Limit number of generators that can be bought per timestep
+ - Setting for "get income from generators before buying at each timestep" or "buy at each timestep before getting income" (right now it's the first)
 
