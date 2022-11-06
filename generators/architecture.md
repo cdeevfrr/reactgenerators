@@ -73,3 +73,5 @@ Add the following to generator specifications:
  - Limit number of generators that can be bought per timestep
  - Setting for "get income from generators before buying at each timestep" or "buy at each timestep before getting income" (right now it's the first)
 
+ New type of strategy: Specify the type of generator to buy at each timestep. The strategy always buys as many as it can during that timestep. This might do better for modeling things like stardew, where the amount of money you have at each timestep has a large random component to it, and what really matters for optimization is the day of the month - on each day, given a certain number of sprinklers, there's an optimal crop to buy & you should buy as many as you can.
+
