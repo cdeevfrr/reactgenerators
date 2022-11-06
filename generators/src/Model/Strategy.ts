@@ -98,7 +98,7 @@ class Strategy{
         }
 
         // If currentState is before n, we'll just advance current state until we hit n.
-        while (n < this.currentState.timestamp){
+        while (this.currentState.timestamp < n){
             this.currentState = this.nextSnapshot(this.currentState)
         } 
         if (n == this.currentState.timestamp){
