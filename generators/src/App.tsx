@@ -1,6 +1,9 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { Generator } from './Model/Generator';
+import { GeneratorComponent } from './Components/GeneratorComponent'
+import { updateGenerator } from './Model/UserActions';
 
 function App() {
   return (
@@ -18,6 +21,7 @@ function App() {
         >
           Learn React
         </a>
+        <GeneratorComponent g={new Generator({cost: 1, income: 5, name: "f"})} saveGeneratorFunction={updateGenerator}/>
       </header>
     </div>
   );
