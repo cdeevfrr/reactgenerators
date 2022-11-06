@@ -4,8 +4,13 @@ import './App.css';
 import { Generator } from './Model/Generator';
 import { GeneratorComponent } from './Components/GeneratorComponent'
 import { updateGenerator } from './Model/UserActions';
+import { StrategyComponent } from './Components/StrategyComponent';
+import { Strategy } from './Model/Strategy';
 
 function App() {
+  const g = new Generator({cost: 1, income: 5, name: "f"})
+  const s = new Strategy([g, g, g, g, g, g, g])
+
   return (
     <div className="App">
       <header className="App-header">
@@ -21,7 +26,8 @@ function App() {
         >
           Learn React
         </a>
-        <GeneratorComponent g={new Generator({cost: 1, income: 5, name: "f"})} saveGeneratorFunction={updateGenerator}/>
+        <GeneratorComponent g={g} saveGeneratorFunction={updateGenerator}/>
+        <StrategyComponent s={s} timestampToDisplay={10} />
       </header>
     </div>
   );
