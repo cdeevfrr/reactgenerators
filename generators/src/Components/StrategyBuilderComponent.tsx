@@ -57,8 +57,16 @@ function StrategyBuilderComponent({
         setStrategy(new Strategy(newGeneratorList))
     }
 
+    function addCurrentStrategyToPopulation(){
+        state.population.push(strategy)
+        updateState(state.snapshotClone())
+    }
+
     return <div>
-        <label>Timestamp<input value={timestampToDisplay}></input></label>
+        <div>
+            <button onClick={addCurrentStrategyToPopulation}>Add Strategy to Population</button>
+            <label>Timestamp<input value={timestampToDisplay}></input></label>
+        </div>
         <DraggableList<
             GeneratorCopyKey, // Item type
             {removeGenerator: (g: GeneratorCopyKey) => void}, //Common props passed to the template that renders items
