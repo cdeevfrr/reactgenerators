@@ -45,6 +45,12 @@ function StrategyBuilderComponent({
         setStrategy(newStrategy)
     }
 
+    function updateTimestampEvent(event: React.ChangeEvent<HTMLInputElement>){
+        const digits = event.target.value.replace(/[^\d]/g, '')
+        const newNumber = Number(digits) || timestampToDisplay // Automatically undo edits that make it not-a-number.
+        setTimestampToDisplay(newNumber) 
+    }
+
     function addGenerator(generator: Generator){
         const newGeneratorList = [...strategy.generatorList, generator]
         const newStrategy = new Strategy(newGeneratorList)
@@ -62,10 +68,14 @@ function StrategyBuilderComponent({
         updateState(state.snapshotClone())
     }
 
+    const displayInfo = strategy.snapshotAtTimestamp(timestampToDisplay)
+
     return <div>
-        <div>
+        <div style={{backgroundColor: "black"}}>
             <button onClick={addCurrentStrategyToPopulation}>Add Strategy to Population</button>
-            <label>Timestamp<input value={timestampToDisplay}></input></label>
+            <label>Timestamp<input value={timestampToDisplay} onChange={updateTimestampEvent}></input></label>
+            <p>Money: {displayInfo.currentMoney}</p>
+            <p>Income: {displayInfo.currentIncomePerTimestep}</p>
         </div>
         <DraggableList<
             GeneratorCopyKey, // Item type
