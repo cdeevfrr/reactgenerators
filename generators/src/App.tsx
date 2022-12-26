@@ -8,6 +8,8 @@ import { StrategyComponent } from './Components/StrategyComponent';
 import { Strategy } from './Model/Strategy';
 import { EditGeneratorsComponent } from './Components/EditGeneratorsComponent';
 import { AlgorithmState } from './Model/AlgorithmState';
+import { PopulationComponent } from './Components/PopulationComponent';
+import { StrategyBuilderComponent } from './Components/StrategyBuilderComponent';
 
 function App() {
   // Eventually, we won't pass setAlgorithmState down
@@ -23,9 +25,11 @@ function App() {
   // Since we're using development mode on React > 18, this runs twice:
   // https://www.techiediaries.com/react-18-useeffect/#:~:text=The%20standard%20behavior%20of%20the,effect%20twice%20instead%20of%20once.
   useEffect(() => {
-    const g = new Generator({cost: 1, income: 5, name: "f"})
+    const f = new Generator({cost: 1, income: 5, name: "f"})
+    const g = new Generator({cost: 5, income: 20, name: "g"})
     const s = new Strategy([g, g, g, g, g, g, g])
   
+    algorithmState.generatorChoices.push(f)
     algorithmState.generatorChoices.push(g)
     algorithmState.population.push(s)
     setAlgorithmState(algorithmState.snapshotClone())
@@ -49,6 +53,8 @@ function App() {
         </a>
 
         <EditGeneratorsComponent state={algorithmState} updateState={setAlgorithmState}/>
+        <PopulationComponent state={algorithmState} updateState={setAlgorithmState} />
+        <StrategyBuilderComponent state={algorithmState} updateState={setAlgorithmState}></StrategyBuilderComponent>
       </header>
     </div>
   );
