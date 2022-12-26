@@ -21,11 +21,12 @@ type ComparisonFunction = (s1: Snapshot, s2: Snapshot) => StrategyComparisonOutc
 
 class Strategy{
     generatorList: ReadonlyArray<Generator>
-    snapshots: {[timestamp: number]: Snapshot} // Let's store every 2^n timestamp
+    snapshots: {[timestamp: number]: Snapshot} // Let's store every 2^n timestamp, and timestamp 0.
     currentState: Snapshot
 
     constructor(generatorList: ReadonlyArray<Generator>){
         this.generatorList = generatorList
+        // Copy of clearStoredData() to make compiler happy.
         this.snapshots = {}
         this.currentState = {
             currentMoney: 0,
@@ -33,6 +34,7 @@ class Strategy{
             nextGeneratorToBuy: 0,
             timestamp: 0
         }
+        this.snapshots[0] = this.currentState
     }
 
     clearStoredData(){
@@ -43,13 +45,28 @@ class Strategy{
             nextGeneratorToBuy: 0,
             timestamp: 0
         }
+        this.snapshots[0] = this.currentState
+    }
+
+    /**
+     * Start this strategy over, but assume it has n dollars to start with.
+     * @param n 
+     */
+    restartWithMoney(n: number){
+        this.clearStoredData()
+        this.currentState.currentMoney = n // overwrites snapshots[0] too.
     }
 
 
     /**
      * Given the previous snapshot, figure out what the snapshot would look like after one additional timestep
      * 
-     * If the timestamp is a power of 2, store it. 
+     * Each timestep includes:
+     *    - Add income
+     *    - buy as many generators as you can
+     * This means that timesteps generally report low money values.
+     * 
+     * If the timestamp is a power of 2, statefully store it. 
      * @param previousSnapshot 
      */
     nextSnapshot(previousSnapshot: Snapshot): Snapshot{
@@ -65,7 +82,7 @@ class Strategy{
         let nextGeneratorToBuyIndex = previousSnapshot.nextGeneratorToBuy
         let nextToBuy = this.generatorList[nextGeneratorToBuyIndex]
         // While we can buy it, see if we can buy the one after that too.
-        while (nextToBuy && newMoney > nextToBuy.cost){
+        while (nextToBuy && newMoney >= nextToBuy.cost){
             // buy a generator
             newMoney -= nextToBuy.cost
             newIncome += nextToBuy.income
@@ -93,7 +110,7 @@ class Strategy{
     }
 
     snapshotAtTimestamp(n: number): Snapshot{
-        if (n < 1){
+        if (n < 0){
             throw new Error ("Cannot find state at timestamp " + n)
         }
 
