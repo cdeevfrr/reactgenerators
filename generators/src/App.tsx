@@ -8,7 +8,7 @@ import { StrategyComponent } from './Components/StrategyComponent';
 import { Strategy } from './Model/Strategy';
 import { EditGeneratorsComponent } from './Components/EditGeneratorsComponent';
 import { AlgorithmState } from './Model/AlgorithmState';
-import { PopulationComponent } from './Components/PopulationComponent';
+import { defaultStartingMoney, PopulationComponent } from './Components/PopulationComponent';
 import { StrategyBuilderComponent } from './Components/StrategyBuilderComponent';
 
 function App() {
@@ -28,6 +28,7 @@ function App() {
     const f = new Generator({cost: 1, income: 5, name: "f"})
     const g = new Generator({cost: 5, income: 20, name: "g"})
     const s = new Strategy([g, g, g, g, g, g, g])
+    s.restartWithMoney(defaultStartingMoney)
   
     algorithmState.generatorChoices.push(f)
     algorithmState.generatorChoices.push(g)

@@ -29,8 +29,13 @@ function StrategyBuilderComponent({
     state: AlgorithmState,
     updateState: (state: AlgorithmState) => void
 }){
-    const [timestampToDisplay, setTimestampToDisplay] = useState(10)
-    const [strategy, setStrategy] = useState(new Strategy(generatorList || []))
+
+    const [timestampToDisplay, setTimestampToDisplay] = useState(state.evaluationTimesteps)
+    const [strategy, setStrategy] = useState(() => {
+        const defaultStrategy = new Strategy(generatorList || [])
+        defaultStrategy.restartWithMoney(state.startingMoney)
+        return defaultStrategy
+    })
 
     // TODO there's some way to get the typing of this function to be
     // TypeOf<DraggableList.onMoveEnd>
@@ -42,6 +47,7 @@ function StrategyBuilderComponent({
     ){
         const newGeneratorList = newList.map(copyKey => strategy.generatorList[copyKey.index])
         const newStrategy = new Strategy(newGeneratorList)
+        newStrategy.restartWithMoney(state.startingMoney)
         setStrategy(newStrategy)
     }
 
@@ -54,13 +60,16 @@ function StrategyBuilderComponent({
     function addGenerator(generator: Generator){
         const newGeneratorList = [...strategy.generatorList, generator]
         const newStrategy = new Strategy(newGeneratorList)
+        newStrategy.restartWithMoney(state.startingMoney)
         setStrategy(newStrategy)
     }
     
     function removeGenerator(key: GeneratorCopyKey){
         const newGeneratorList = [...strategy.generatorList]
         newGeneratorList.splice(key.index, 1)
-        setStrategy(new Strategy(newGeneratorList))
+        const newStrategy = new Strategy(newGeneratorList)
+        newStrategy.restartWithMoney(state.startingMoney)
+        setStrategy(newStrategy)
     }
 
     function addCurrentStrategyToPopulation(){

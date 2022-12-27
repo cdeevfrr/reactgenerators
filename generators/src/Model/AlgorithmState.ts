@@ -18,12 +18,12 @@ import { Generator } from "./Generator"
 class AlgorithmState {
     generatorChoices: Array<Generator>
     population: Array<Strategy>
-
-    n = 100
+    startingMoney = 10
+    evaluationTimesteps = 100
 
     strategyComparisonFunction = (s1: Strategy, s2: Strategy) => 
-        s1.snapshotAtTimestamp(this.n).currentMoney 
-        - s2.snapshotAtTimestamp(this.n).currentMoney
+        s1.snapshotAtTimestamp(this.evaluationTimesteps).currentMoney 
+        - s2.snapshotAtTimestamp(this.evaluationTimesteps).currentMoney
     
 
     constructor(){
@@ -39,6 +39,21 @@ class AlgorithmState {
         this.population.sort(this.strategyComparisonFunction)
     }
 
+    setStartingMoney(newStartingMoney: number){
+        if (newStartingMoney != this.startingMoney){
+            this.startingMoney = newStartingMoney
+            this.population.forEach(strategy => {
+                strategy.restartWithMoney(newStartingMoney)
+            })
+        }
+    }
+
+    setEvaluationTimesteps(newTimesteps: number){
+        this.evaluationTimesteps = newTimesteps
+    }
+
+
+
     /**
      * This is used to make all new objects from this algorithmState so that react will register the fact that they're different.
      */
@@ -46,6 +61,8 @@ class AlgorithmState {
         const result = new AlgorithmState()
         result.generatorChoices = [...  this.generatorChoices]
         result.population = [... this.population] // since strategies always look the same as long as generators, timestampToSee, and goal settings don't change, it's ok to skip re-rendering for each individual strategy.
+        result.evaluationTimesteps = this.evaluationTimesteps
+        result.startingMoney = this.startingMoney
         return result
     }
 }
