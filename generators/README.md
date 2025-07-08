@@ -7,7 +7,7 @@ Generators are "things which cost resources to acquire, and which then produce r
 
 The goal is to make a very user-friendly interface for specifying real-life generators and understanding how they interact.
 
-We will assume that generators can never _hurt_ you, so given some ordering in which generators must be purchased, it's always strictly better to purchase each one as soon as possible. Such an ordering of generators is called a _Strategy_. The goal is to find very good (or maybe optimal) strategies given user-specified generators, user specified definitions of goodness (total dollars after n timesteps? most money in the limit? ...?), and while allowing users to easily test slight modifications to strategies eg "If I swap the generators in spot i an j, how much worse is the result?"
+We will assume that, if you plan to purchase a generator, delaying the purchase can never _hurt_ you; so given some ordering in which generators must be purchased, it's always strictly better to purchase each one as soon as possible. Such an ordering of generators is called a _Strategy_. The goal is to find very good (or maybe optimal) strategies given user-specified generators, user specified definitions of goodness (total dollars after n timesteps? most money in the limit? ...?), and while allowing users to easily test slight modifications to strategies eg "If I swap the generators in spot i an j, how much worse is the result?"
 
 Many players of many of the games mentioned above think they have clearly optimal formulas, eg "time to recovering investment / investment" or similar. However, every formula we've seen fails in at least one case. See the starterURL in [the previous version of this project](https://github.com/cdeevfrr/generators)
 
