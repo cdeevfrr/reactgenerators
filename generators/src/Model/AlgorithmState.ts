@@ -21,8 +21,8 @@ class AlgorithmState {
     generatorChoices: Array<Generator>
     population: Array<Strategy>
     populationSize = 5
-    startingMoney = 10
-    evaluationTimesteps = 100
+    startingMoney = 20
+    evaluationTimesteps = 17
 
     // TODO: Use Strategy.compare instead.
     strategyComparisonFunction = (s1: Strategy, s2: Strategy) => 

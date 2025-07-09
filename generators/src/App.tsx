@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import logo from './logo.svg';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { Generator } from './Model/Generator';
 import { Strategy } from './Model/Strategy';
@@ -48,8 +47,8 @@ function App() {
     }
 
     // Simulate a DB load
-    const f = new Generator({cost: 1, income: 5, name: "f"})
-    const g = new Generator({cost: 5, income: 20, name: "g"})
+    const f = new Generator({cost: 5, income: 1, name: "fast"})
+    const g = new Generator({cost: 20, income: 5, name: "good"})
     const s = new Strategy([g, g, g, g, g, g, g])
     s.restartWithMoney(defaultStartingMoney)
   
