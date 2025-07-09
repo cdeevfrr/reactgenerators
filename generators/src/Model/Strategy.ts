@@ -19,6 +19,13 @@ enum StrategyComparisonOutcome {
 
 type ComparisonFunction = (s1: Snapshot, s2: Snapshot) => StrategyComparisonOutcome
 
+// A strategy is an ordered list of generators we want to buy.
+// Given a strategy, there is a 1:1 function state(t) from timestamp to {money, generators bought, ...}
+// 
+// This class does a bunch of computational hacks to make it easy to comute that 
+// function somewhat quickly.
+// Namely, it stores snapshots of a few timestamps, and computes state(t) by starting at the nearest
+// stored snapshot.
 class Strategy{
     generatorList: ReadonlyArray<Generator>
     snapshots: {[timestamp: number]: Snapshot} // Let's store every 2^n timestamp, and timestamp 0.
