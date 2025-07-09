@@ -21,7 +21,8 @@ Many players of many of the games mentioned above think they have clearly optima
 
 See package scripts. 
 - `npm run deploy` works with the gh-pages npm package
-- `npm run start` and `npm run test` run with react-scripts.
+- `npm run start` and `npm run test` run with react-scripts. 
+    - To run all tests (not just ones recently modified) run `npm run test -- --watchAll`
 
 
 
