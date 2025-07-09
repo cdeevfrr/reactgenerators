@@ -21,6 +21,7 @@ class AlgorithmState {
     startingMoney = 10
     evaluationTimesteps = 100
 
+    // TODO: Use Strategy.compare instead.
     strategyComparisonFunction = (s1: Strategy, s2: Strategy) => 
         s1.snapshotAtTimestamp(this.evaluationTimesteps).currentMoney 
         - s2.snapshotAtTimestamp(this.evaluationTimesteps).currentMoney
@@ -29,17 +30,6 @@ class AlgorithmState {
     constructor(){
         this.generatorChoices = []
         this.population = []
-    }
-
-    /**
-     * This is the method that will effectively be the 'solver'
-     * and should be called regularly in the background. 
-     */
-    async computeOneStep(){
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        console.log("I computed one step")
-        this.population.sort(this.strategyComparisonFunction)
-        return this
     }
 
     setStartingMoney(newStartingMoney: number){
@@ -69,9 +59,16 @@ class AlgorithmState {
         return result
     }
 
-    
-    didUpdate(other: AlgorithmState){
-        return true // other.population .deepEqual(other.population)
+
+    /**
+     * This is the method that will effectively be the 'solver'
+     * and should be called regularly in the background. 
+     */
+    async computeOneStep(){
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        console.log("I computed one step")
+        this.population.sort(this.strategyComparisonFunction)
+        return this
     }
 }
 

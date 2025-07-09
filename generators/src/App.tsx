@@ -7,6 +7,7 @@ import { EditGeneratorsComponent } from './Components/EditGeneratorsComponent';
 import { AlgorithmState } from './Model/AlgorithmState';
 import { defaultStartingMoney, PopulationComponent } from './Components/PopulationComponent';
 import { StrategyBuilderComponent } from './Components/StrategyBuilderComponent';
+import { styles } from './styles';
 
 function App() {
   // This app, rather than using a state library like Redux, holds all state in the AlgorithmState object. 
@@ -18,6 +19,7 @@ function App() {
 
   // Tracks whether the background process should stop
   const backgroundAbortController = useRef<{ abort: () => void } | null>(null);
+  const [userStoppedBackground, setUserStoppedBackground] = useState<boolean>(false);
 
 
   // Instead of letting sub components setAlgorithmState directly, we make a userSetState
@@ -77,8 +79,8 @@ function App() {
     const runBackgroundLoop = async () => {
       let newState = await backgroundState.snapshotClone().computeOneStep();
       while (
-        newState.didUpdate(backgroundState) &&
-        !aborted
+        !aborted &&
+        !userStoppedBackground
       ) {
         backgroundState = newState;
         newState = await backgroundState.computeOneStep();
@@ -115,12 +117,34 @@ function App() {
 
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div style={{textAlign: "center"}}>
+      <header style={styles.appHeader}>
         <EditGeneratorsComponent state={algorithmState} updateState={userSetAlgorithmState}/>
         <PopulationComponent state={algorithmState} updateState={userSetAlgorithmState} />
         <StrategyBuilderComponent state={algorithmState} updateState={userSetAlgorithmState}></StrategyBuilderComponent>
       </header>
+
+      {/* Floating Start/Stop Button */}
+      <div style={{
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        zIndex: 1000,
+      }}>
+        <button
+          style={styles.button}
+          onClick={() => {
+            setUserStoppedBackground(!userStoppedBackground)
+            if (!userStoppedBackground){ // If they clicked 'stop'
+              if (backgroundAbortController.current){
+                backgroundAbortController.current.abort()
+              }
+            }
+          }}
+        >
+          {userStoppedBackground ? 'Start' : 'Stop'}
+        </button>
+      </div>
     </div>
   );
 }

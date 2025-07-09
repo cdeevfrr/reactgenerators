@@ -148,6 +148,18 @@ class Strategy{
         }
     }
 
+    // While the compare function cares about money at a given timestamp, for sorting,
+    // this function just evaulates the abstract idea of a strategy as
+    // a function (generatorList, timestamp) -> {money, boughtGenerators}
+    // and asks if another Strategy object represents the same function.
+    isSameStrategy(other: Strategy){
+        return canonical(other.generatorList) === canonical(this.generatorList)
+    }
+
+}
+
+function canonical(gList: ReadonlyArray<Generator>){
+    return JSON.stringify(gList.map((g) => {return {"name": g.name, "cost": g.cost, "income": g.income}}))
 }
 
 //https://stackoverflow.com/questions/30924280/what-is-the-best-way-to-determine-if-a-given-number-is-a-power-of-two
