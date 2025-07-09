@@ -32,7 +32,7 @@ class Strategy{
     currentState: Snapshot
 
     constructor(generatorList: ReadonlyArray<Generator>){
-        this.generatorList = generatorList
+        this.generatorList = generatorList.slice() // Create a shallow copy
         // Copy of clearStoredData() to make compiler happy.
         this.snapshots = {}
         this.currentState = {
