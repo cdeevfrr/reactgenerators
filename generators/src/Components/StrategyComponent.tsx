@@ -19,7 +19,7 @@ function StrategyComponent({s, timestampToDisplay}: {s: Strategy, timestampToDis
             )
         }
     </div>
-    return <div style={{display: "flex", flexFlow:'flow wrap'}}>
+    return <div style={{display: "flex", flexFlow:'flow wrap', margin: '5px'}}>
         {generatorsListArea}
         {summaryArea}
     </div>
