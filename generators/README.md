@@ -1,3 +1,7 @@
+# What's this?
+
+See it live at [(https://cdeevfrr.github.io/reactgenerators/)](https://cdeevfrr.github.io/reactgenerators/)
+
 # Generators
 
 This project is similar to https://github.com/cdeevfrr/generators but intended to be more flexible/user friendly.
@@ -13,6 +17,11 @@ Many players of many of the games mentioned above think they have clearly optima
 
 # Goals
 
+# Devops
+
+See package scripts. 
+- `npm run deploy` works with the gh-pages npm package
+- `npm run start` and `npm run test` run with react-scripts.
 
 
 
