@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AlgorithmState } from '../Model/AlgorithmState';
 // import { makeNewStrategy } from '../Controller/UserActions';
 import { StrategyComponent } from './StrategyComponent';
+import { styles } from '../styles';
 
 const defaultStartingMoney = 10
 
@@ -40,7 +41,8 @@ function PopulationComponent({state, updateState}: {
         }
     }
 
-    return <div>
+    return <div style={styles.componentBoxStyle}>
+        <p style={styles.title}>Population</p>
         <div>
             <label>Starting money<input value={state.startingMoney} onInput={updateMoneyEvent}></input></label>
             <label>Timestamp<input value={state.evaluationTimesteps} onChange={updateTimestampEvent}></input></label>

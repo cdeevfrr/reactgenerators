@@ -2,6 +2,7 @@ import React from 'react';
 import { AlgorithmState } from '../Model/AlgorithmState';
 import { GeneratorComponent } from './GeneratorComponent';
 import { updateGenerator, makeNewGenerator } from '../Controller/UserActions';
+import { styles } from '../styles';
 
 
 function EditGeneratorsComponent({state, updateState}: {
@@ -9,7 +10,8 @@ function EditGeneratorsComponent({state, updateState}: {
     updateState: (state: AlgorithmState) => void
 }){
     
-    return <div>
+    return <div style={styles.componentBoxStyle}>
+        <p style={styles.title}>Generators</p>
         <ul>
             {state.generatorChoices.map(generator => {
 

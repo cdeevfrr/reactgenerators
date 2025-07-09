@@ -6,6 +6,7 @@ import { StrategyComponent } from "./StrategyComponent";
 import DraggableList from 'react-draggable-list'
 import React from "react";
 import { AddGeneratorComponent } from "./AddGeneratorComponent";
+import { styles } from "../styles";
 
 
 /**
@@ -79,7 +80,8 @@ function StrategyBuilderComponent({
 
     const displayInfo = strategy.snapshotAtTimestamp(timestampToDisplay)
 
-    return <div>
+    return <div style={styles.componentBoxStyle}>
+        <p style={styles.title}>Strategy Builder</p>
         <div style={{backgroundColor: "black"}}>
             <button onClick={addCurrentStrategyToPopulation}>Add Strategy to Population</button>
             <label>Timestamp<input value={timestampToDisplay} onChange={updateTimestampEvent}></input></label>
