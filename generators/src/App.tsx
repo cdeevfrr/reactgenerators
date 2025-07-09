@@ -14,6 +14,7 @@ function App() {
   // and kicking off a background process to compute the resources each generator has over time.
 
   const [algorithmState, setAlgorithmState] = useState(new AlgorithmState())
+  const dbLoaded = useRef<boolean>(false)
 
   // Tracks whether the background process should stop
   const backgroundAbortController = useRef<{ abort: () => void } | null>(null);
@@ -39,10 +40,12 @@ function App() {
     });
   };
 
-  // On first load, initialize the algorithm state.
-  // Since we're using development mode on React > 18, this runs twice:
-  // https://www.techiediaries.com/react-18-useeffect/#:~:text=The%20standard%20behavior%20of%20the,effect%20twice%20instead%20of%20once.
   useEffect(() => {
+    if (dbLoaded.current){ // Explicitly gate this to run at most once. UseEffect runs twice in dev mode, and seems to re-run regularly?
+      return
+    }
+
+    // Simulate a DB load
     const f = new Generator({cost: 1, income: 5, name: "f"})
     const g = new Generator({cost: 5, income: 20, name: "g"})
     const s = new Strategy([g, g, g, g, g, g, g])
@@ -51,6 +54,7 @@ function App() {
     algorithmState.generatorChoices.push(f)
     algorithmState.generatorChoices.push(g)
     algorithmState.population.push(s)
+    dbLoaded.current = true
     setAlgorithmState(algorithmState.snapshotClone())
   }, [])
 
