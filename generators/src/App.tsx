@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Generator } from './Model/Generator';
-import { GeneratorComponent } from './Components/GeneratorComponent'
-import { updateGenerator } from './Controller/UserActions';
-import { StrategyComponent } from './Components/StrategyComponent';
 import { Strategy } from './Model/Strategy';
 import { EditGeneratorsComponent } from './Components/EditGeneratorsComponent';
 import { AlgorithmState } from './Model/AlgorithmState';
@@ -12,14 +9,35 @@ import { defaultStartingMoney, PopulationComponent } from './Components/Populati
 import { StrategyBuilderComponent } from './Components/StrategyBuilderComponent';
 
 function App() {
-  // Eventually, we won't pass setAlgorithmState down
-  // We'll wrap it in another function.
-  // If we have a background process changing the algorithm state & the user changing algorithm state, 
-  // and both get in the setState queue at the same time, we always want the user process to win.
-  // So before a user action can setState, it should mark a flag like "backgroundUpdatesInvalid".
-  // Before the background stuff can setState, it should check that the flag still lets it.
-  // The flag should go green, and background process start, only after there's nothing left in the useState queue, so I assume after a render completes.
+  // This app, rather than using a state library like Redux, holds all state in the AlgorithmState object. 
+  // The majorit of this file deals with ensuring that user updates to this state take precedence over background updates,
+  // and kicking off a background process to compute the resources each generator has over time.
+
   const [algorithmState, setAlgorithmState] = useState(new AlgorithmState())
+
+  // Tracks whether the background process should stop
+  const backgroundAbortController = useRef<{ abort: () => void } | null>(null);
+
+
+  // Instead of letting sub components setAlgorithmState directly, we make a userSetState
+  // and a backgroundSetState that aborts if userSetState has alread been called.
+  const lastUserUpdate = useRef<number>(0)
+  const userSetAlgorithmState = (state: AlgorithmState) => {
+    const now = Date.now();
+    lastUserUpdate.current = now;
+    setAlgorithmState(state);
+  };
+  const backgroundSetAlgorithmState = (state: AlgorithmState) => {
+    const userUpdateAtStart = lastUserUpdate.current;
+
+    setAlgorithmState((prevState) => {
+      // If a user update happened since this update started, skip
+      if (lastUserUpdate.current > userUpdateAtStart) {
+        return prevState; // Ignore this background update
+      }
+      return state; // Accept background update
+    });
+  };
 
   // On first load, initialize the algorithm state.
   // Since we're using development mode on React > 18, this runs twice:
@@ -35,6 +53,61 @@ function App() {
     algorithmState.population.push(s)
     setAlgorithmState(algorithmState.snapshotClone())
   }, [])
+
+  // Background process kicks off *only* after user updates (see useEffect's second arg below)
+  useEffect(() => {
+    let aborted = false
+
+    // Outline of this useEffect function:
+    // Define 
+    // - the background loop (repeatedly call computeOneStep)
+    // - the render interval.
+    // - the abort fn that stops both.
+    // Then, 
+    // - call the previous abort function (saved from useRef),
+    // - call background loop & render interval
+    // - return the abort fn
+
+    let backgroundState = algorithmState;
+
+    const runBackgroundLoop = async () => {
+      let newState = await backgroundState.snapshotClone().computeOneStep();
+      while (
+        newState.didUpdate(backgroundState) &&
+        !aborted
+      ) {
+        backgroundState = newState;
+        newState = await backgroundState.computeOneStep();
+      }
+    };
+
+    // Rerender update loop
+    const renderInterval = setInterval(() => {
+      if (!aborted) {
+        backgroundSetAlgorithmState(backgroundState);
+      }
+    }, 1000);
+
+    const abortFn = () => {
+      aborted = true;
+      clearInterval(renderInterval);
+    }
+
+    // Shut down any existing runs of this useEffect
+    if (backgroundAbortController.current){
+      backgroundAbortController.current.abort()
+    }
+    backgroundAbortController.current = {
+      abort: abortFn
+    };
+    // Start the background loop
+    runBackgroundLoop();
+
+    // In addition to `abort` being called when replaced by a user update 
+    //    retriggering this block, (backgroundAbortController.current.abort())
+    // Also call it when unmounting.
+    return abortFn;
+  }, [lastUserUpdate.current]); // 👈 re-runs only after a new user update
 
 
   return (
@@ -53,9 +126,9 @@ function App() {
           Learn React
         </a>
 
-        <EditGeneratorsComponent state={algorithmState} updateState={setAlgorithmState}/>
-        <PopulationComponent state={algorithmState} updateState={setAlgorithmState} />
-        <StrategyBuilderComponent state={algorithmState} updateState={setAlgorithmState}></StrategyBuilderComponent>
+        <EditGeneratorsComponent state={algorithmState} updateState={userSetAlgorithmState}/>
+        <PopulationComponent state={algorithmState} updateState={userSetAlgorithmState} />
+        <StrategyBuilderComponent state={algorithmState} updateState={userSetAlgorithmState}></StrategyBuilderComponent>
       </header>
     </div>
   );

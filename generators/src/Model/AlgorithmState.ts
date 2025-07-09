@@ -35,8 +35,11 @@ class AlgorithmState {
      * This is the method that will effectively be the 'solver'
      * and should be called regularly in the background. 
      */
-    computeOneStep(){
+    async computeOneStep(){
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        console.log("I computed one step")
         this.population.sort(this.strategyComparisonFunction)
+        return this
     }
 
     setStartingMoney(newStartingMoney: number){
@@ -64,6 +67,11 @@ class AlgorithmState {
         result.evaluationTimesteps = this.evaluationTimesteps
         result.startingMoney = this.startingMoney
         return result
+    }
+
+    
+    didUpdate(other: AlgorithmState){
+        return true // other.population .deepEqual(other.population)
     }
 }
 
