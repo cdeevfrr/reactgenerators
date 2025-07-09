@@ -1,5 +1,7 @@
 import { Strategy } from "./Strategy"
 import { Generator } from "./Generator"
+import { randomExpDecayChoice } from "./Utility"
+import { Mutators } from "./Mutators"
 
 
 /**
@@ -18,13 +20,14 @@ import { Generator } from "./Generator"
 class AlgorithmState {
     generatorChoices: Array<Generator>
     population: Array<Strategy>
+    populationSize = 5
     startingMoney = 10
     evaluationTimesteps = 100
 
     // TODO: Use Strategy.compare instead.
     strategyComparisonFunction = (s1: Strategy, s2: Strategy) => 
-        s1.snapshotAtTimestamp(this.evaluationTimesteps).currentMoney 
-        - s2.snapshotAtTimestamp(this.evaluationTimesteps).currentMoney
+        s2.snapshotAtTimestamp(this.evaluationTimesteps).currentMoney 
+        - s1.snapshotAtTimestamp(this.evaluationTimesteps).currentMoney
     
 
     constructor(){
@@ -65,9 +68,24 @@ class AlgorithmState {
      * and should be called regularly in the background. 
      */
     async computeOneStep(){
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        console.log("I computed one step")
+        console.log("Starting one step")
+
         this.population.sort(this.strategyComparisonFunction)
+
+        const toModify = randomExpDecayChoice(this.population)
+        const child = Mutators.simpleMutate(toModify, this.generatorChoices)
+        child.restartWithMoney(this.startingMoney)
+        this.population.push(child)
+
+        // Sleep added for visibility - nothing here is shown to user so it's just to slow things down.
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        this.population.sort(this.strategyComparisonFunction)
+        while (this.population.length >= this.populationSize){
+            this.population.pop()
+        }
+
+        console.log("I computed one step")
         return this
     }
 }
